@@ -31,6 +31,7 @@ This project defines a comprehensive e-commerce database schema, ensuring optimi
 
 
 📌 ERD Visualization
+![image](https://github.com/user-attachments/assets/60bf765a-b18c-4151-8718-f94a9be81f91)
 
 🚀 Installation & Setup
 1️⃣ Clone the repository:
