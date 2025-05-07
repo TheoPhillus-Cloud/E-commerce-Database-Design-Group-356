@@ -1,18 +1,52 @@
-CREATE TABLE brand (
-    brand_id INT PRIMARY KEY AUTO_INCREMENT,
-    brand_name VARCHAR(255) NOT NULL
-);
+CREATE DATABASE ecommerce;
+USE ecommerce;
 
+-- Product Table
 CREATE TABLE product (
-    product_id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
-    brand_id INT,
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
     base_price DECIMAL(10,2),
+    brand_id INT,
     FOREIGN KEY (brand_id) REFERENCES brand(brand_id)
 );
 
+-- Product Image Table
+CREATE TABLE product_image (
+    image_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT,
+    image_url VARCHAR(255),
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
+);
+
+-- Color Table
+CREATE TABLE color (
+    color_id INT AUTO_INCREMENT PRIMARY KEY,
+    color_name VARCHAR(100)
+);
+
+-- Product Category Table
+CREATE TABLE product_category (
+    category_id INT AUTO_INCREMENT PRIMARY KEY,
+    category_name VARCHAR(255)
+);
+
+-- Brand Table
+CREATE TABLE brand (
+    brand_id INT AUTO_INCREMENT PRIMARY KEY,
+    brand_name VARCHAR(255)
+);
+
+-- Product Item Table
+CREATE TABLE product_item (
+    item_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT,
+    price DECIMAL(10,2),
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
+);
+
+-- Product Variation Table
 CREATE TABLE product_variation (
-    variation_id INT PRIMARY KEY AUTO_INCREMENT,
+    variation_id INT AUTO_INCREMENT PRIMARY KEY,
     product_id INT,
     color_id INT,
     size_id INT,
@@ -21,34 +55,56 @@ CREATE TABLE product_variation (
     FOREIGN KEY (size_id) REFERENCES size_option(size_id)
 );
 
--- Data Insertion Queries
-INSERT INTO brand (brand_name) VALUES ('TechNova'), ('StyleWave');
+-- Size Category Table
+CREATE TABLE size_category (
+    size_category_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100)
+);
 
-INSERT INTO product (name, brand_id, base_price) VALUES 
-('Smartphone X', 1, 799.99), 
-('Running Shoes', 2, 99.99);
+-- Size Option Table
+CREATE TABLE size_option (
+    size_id INT AUTO_INCREMENT PRIMARY KEY,
+    size_category_id INT,
+    size_value VARCHAR(50),
+    FOREIGN KEY (size_category_id) REFERENCES size_category(size_category_id)
+);
 
-INSERT INTO product_variation (product_id, color_id, size_id) VALUES 
-(1, 3, NULL), -- Smartphone has no size, only color
-(2, 2, 5); -- Shoes have both color and size
+-- Product Attribute Table
+CREATE TABLE product_attribute (
+    attribute_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT,
+    attribute_category_id INT,
+    attribute_value VARCHAR(255),
+    FOREIGN KEY (product_id) REFERENCES product(product_id),
+    FOREIGN KEY (attribute_category_id) REFERENCES attribute_category(attribute_category_id)
+);
 
--- Data Retrieval Queries
--- Fetch product with their brand name
-SELECT p.name, b.brand_name, p.base_price 
-FROM product p
-JOIN brand b ON p.brand_id = b.brand_id;
--- Retrieve all variations for specific product
-SELECT pv.variation_id, p.name, c.color_name, s.size_label
-FROM product_variation pv
-JOIN product p ON pv.product_id = p.product_id
-JOIN color c ON pv.color_id = c.color_id
-LEFT JOIN size_option s ON pv.size_id = s.size_id
-WHERE p.product_id = 2;
+-- Attribute Category Table
+CREATE TABLE attribute_category (
+    attribute_category_id INT AUTO_INCREMENT PRIMARY KEY,
+    category_name VARCHAR(255)
+);
 
--- Updating and Managing Data
-UPDATE product 
-SET base_price = 89.99 
-WHERE name = 'Running Shoes';
--- Delete a variation if no longer ofered
-DELETE FROM product_variation 
-WHERE variation_id = 2;
+-- Attribute Type Table
+CREATE TABLE attribute_type (
+    type_id INT AUTO_INCREMENT PRIMARY KEY,
+    type_name VARCHAR(255)
+);
+
+-- Insert into brand
+INSERT INTO brand (brand_name) VALUES ('Nike'), ('Adidas'), ('Puma');
+
+-- Insert into product_category
+INSERT INTO product_category (category_name) VALUES ('Clothing'), ('Electronics');
+
+-- Insert into product
+INSERT INTO product (name, base_price, brand_id) VALUES ('Running Shoes', 59.99, 1), ('Smartwatch', 199.99, 2);
+
+-- Insert into color
+INSERT INTO color (color_name) VALUES ('Red'), ('Blue'), ('Black');
+
+-- Insert into product_image
+INSERT INTO product_image (product_id, image_url) VALUES (1, 'nike_shoes.jpg'), (2, 'smartwatch.jpg');
+
+-- Insert into product_item
+INSERT INTO product_item (product_id, price) VALUES (1, 49.99), (2, 189.99);
